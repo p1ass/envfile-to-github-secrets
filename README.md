@@ -17,3 +17,9 @@ brew install libsodium
 ```shell script
  go run main.go -owner=p1ass -repo=envfile-to-github-secrets
 ```
+
+## License
+
+以下のコードを参考にさせていただきました。
+- https://qiita.com/kazz187/items/aa9885bb968722ac9b1d
+
