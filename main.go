@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"sync"
 
 	"github.com/joho/godotenv"
 
@@ -47,13 +48,22 @@ func main() {
 		return
 	}
 
+	wg := sync.WaitGroup{}
+
 	for name, secret := range secrets {
-		if err := updateSecret(cli, pubKey, *owner, *repo, name, secret); err != nil {
-			fmt.Println("failed to update secret:", err.Error())
-			os.Exit(1)
-			return
-		}
+		name := name
+		secret := secret
+		wg.Add(1)
+		go func() {
+			if err := updateSecret(cli, pubKey, *owner, *repo, name, secret); err != nil {
+				fmt.Println("failed to update secret:", err.Error())
+				os.Exit(1)
+				return
+			}
+			wg.Done()
+		}()
 	}
+	wg.Wait()
 }
 
 // ref https://qiita.com/kazz187/items/aa9885bb968722ac9b1d
